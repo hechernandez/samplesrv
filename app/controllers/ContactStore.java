@@ -1,28 +1,31 @@
 package controllers;
 
+import models.Contact;
+import models.ContactAddress;
+import models.SortedArrayList;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-
-import models.Contact;
-import models.ContactAddress;
-import models.SortedArrayList;
-
+import java.util.Scanner;
 
 public class ContactStore {
 
+	private File file;
 	private FileInputStream input;
-	private File file= null;
 	private BufferedReader br;
 	private InputStreamReader inputStream;
-	private OutputStreamWriter output;
+
 	private PrintWriter writer;
 
 	private final int CONTACT_FIELDS = 6;
@@ -30,6 +33,10 @@ public class ContactStore {
 
 	public ContactStore() {
 	}
+
+	/**
+	 * Obtains contacts in file.
+	 */
 	public SortedArrayList<Contact> readContacts() {
 
 		SortedArrayList<Contact> tempList = new SortedArrayList<Contact>();
@@ -46,87 +53,73 @@ public class ContactStore {
 		}
 
 		try{
+
 			String line = br.readLine();
+
 			while (line != null) {
 				Contact temp = new Contact();
 				for(int i=0; i < CONTACT_FIELDS; i++){ //from first name to addressfields
 					if(i == 0){
-						System.out.println(line);
-						temp.setId(Long.valueOf(line.substring(2))); // extract id number from format id#
+						temp.setId((long)Long.valueOf(line.substring(2))); // extract id number from format id#
 					}
 					if(i == 1){
-						System.out.println(line);
 						temp.setFirstName(line);
 					}
 					if(i == 2){
-						System.out.println(line);
 						temp.setLastName(line);
 					}
 					if(i == 3){
-						System.out.println(line);
 						temp.setCellPhone(line);
 					}
 					if(i == 4){
-						System.out.println(line);
 						temp.setWorkPhone(line);
 					}
 					if(i == 5){
-						System.out.println(line);
 						temp.setEmail(line);
-
 					}
+//					if(i == 6){
+//						this.ADDRESS_FIELDS = Integer.valueOf((line.substring(13))); // extract address fields from format addressfields#
+//					}
 					line = br.readLine();
 				}
 
-				if(line == null) {
-					tempList.add(temp);
-					break;
-				} else if(line.contains("id")) {
-					tempList.add(temp);
-					continue;
-				} else if( line.contains("address") ) {
-					char addressTotal = line.charAt(13);
-					this.ADDRESS_FIELDS = Character.getNumericValue(addressTotal); // extract address fields from format addressfields#
-					System.out.println("ADDRESS FIELDS: " + this.ADDRESS_FIELDS);
-					ArrayList<ContactAddress> addresses = new ArrayList<ContactAddress>();
-					line = br.readLine();
-					for(int i=0; i < this.ADDRESS_FIELDS; i++){ //from address name to zip code
-						ContactAddress address = new ContactAddress();
-						for(int j=0; j < 6; j++){
-							if(j == 0){
-								System.out.println(line);
-								address.setAddressName(line);
-							}
-							if(j == 1){
-								System.out.println(line);
-								address.setStreet(line);
-							}
-							if(j == 2){
-								System.out.println(line);
-								address.setStreetNumber(line);
-							}
-							if(j == 3){
-								System.out.println(line);
-								address.setCity(line);
-							}
-							if(j == 4){
-								System.out.println(line);
-								address.setState(line);
-							}
-							if(j == 5){
-								System.out.println(line);
-								address.setZipCode(line);
-							}
-							line = br.readLine();
-						}
-						addresses.add(address);
-					}
-					temp.setAddressList(addresses);
-				}
+//				for(int i=0; i < ADDRESS_FIELDS; i++){ //from address name to zip code
+//					ContactAddress contactAddress = new ContactAddress();
+//					for(int j=0; j < 6; j++){
+//						if(j == 0){
+//							System.out.println(line);
+//							contactAddress.setAddressName(line);
+//						}
+//						if(j == 1){
+//							System.out.println(line);
+//							contactAddress.setStreet(line);
+//						}
+//						if(j == 2){
+//							System.out.println(line);
+//							contactAddress.setStreetNumber(line);
+//						}
+//						if(j == 3){
+//							System.out.println(line);
+//							contactAddress.setCity(line);
+//						}
+//						if(j == 4){
+//							System.out.println(line);
+//							contactAddress.setState(line);
+//						}
+//						if(j == 5){
+//							System.out.println(line);
+//							contactAddress.setZipCode(line);
+//						}
+//
+//						line = br.readLine();
+//					}
+//					temp.setAddress(contactAddress);
+//				}				
 				tempList.add(temp);
 			}
 			inputStream.close();
 			br.close();
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -136,67 +129,51 @@ public class ContactStore {
 		return tempList;
 	}
 
+	/**
+	 * Writes contacts to file.
+	 * @param contacts the contacts that will be written in the file
+	 */
 	public void writeContacts(SortedArrayList<Contact> contacts){
 
 		try{
-			writer = new PrintWriter(Application.getFile());
 
-			writer.write("");
+			writer = new PrintWriter(Application.getFile());
 
 			for(int i=0; i < contacts.size(); i++){
 				Contact temp = contacts.get(i);
+
 				writer.write("id" + temp.getId() + "\n");
 				writer.write(temp.getFirstName() + "\n");
 				writer.write(temp.getLastName() + "\n");
 				writer.write(temp.getCellPhone() + "\n");
 				writer.write(temp.getWorkPhone() + "\n");
 				writer.write(temp.getEmail() + "\n");
-				if(temp.getNumberOfAddresses() > 0) {
-					writer.write("addressfields" + temp.getNumberOfAddresses() + "\n");
-					for (int j = 0; j < temp.getNumberOfAddresses(); ++j){
-						if (temp.getAddress(j) != null) {
-							for (int k = 0; k < ADDRESS_FIELDS; ++k) {
-								if(j == 0){
-									writer.write(temp.getAddress(j).getAddressName() + "\n");
-								}
-								if(j == 1){
-									writer.write(temp.getAddress(j).getStreet() + "\n");
-								}
-								if(j == 2){
-									writer.write(temp.getAddress(j).getStreetNumber() + "\n");
-								}
-								if(j == 3){
-									writer.write(temp.getAddress(j).getCity() + "\n");
-								}
-								if(j == 4){
-									writer.write(temp.getAddress(j).getState() + "\n");
-								}
-								if(j == 5){
-									writer.write(temp.getAddress(j).getZipCode() + "\n");
-								}
-							}
-						}
-					}
-				}
+
+//				if(temp.getAddress() != null) {
+//					writer.write("addressfields1");
+//					writer.write(temp.getAddress().getAddressName() + "\n");
+//					writer.write(temp.getAddress().getStreet() + "\n");
+//					writer.write(temp.getAddress().getStreetNumber() + "\n");
+//					writer.write(temp.getAddress().getCity() + "\n");
+//					writer.write(temp.getAddress().getState() + "\n");
+//					writer.write(temp.getAddress().getZipCode() + "\n");
+//				}
+//				else {
+//					writer.write("addressfields0");
+//						              writer.write("N/A" + "\n");
+//						              writer.write("N/A" + "\n");
+//						              writer.write("N/A" + "\n");
+//						              writer.write("N/A" + "\n");
+//						              writer.write("N/A" + "\n");
+//						              writer.write("N/A" + "\n");
+//				}				
 			}
 
 			writer.close();
-			output.close();
 
 		} catch(IOException e){
 			e.printStackTrace();
 		}
 	}
-	public void clear() {
-		try {
-			writer = new PrintWriter(Application.getFile());
-			writer.write("");
-			writer.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 }
 

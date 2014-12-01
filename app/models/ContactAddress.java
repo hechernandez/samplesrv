@@ -2,13 +2,12 @@ package models;
 
 import java.io.Serializable;
 
+/**
+ * Created by Katya on 9/28/2014.
+ */
 public class ContactAddress implements Serializable {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String addressName;
+    private String addressName;
     private String street;
     private String streetNumber;
     private String city;

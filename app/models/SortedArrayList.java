@@ -173,7 +173,6 @@ public class SortedArrayList<E> implements SortedList<E>, Serializable {
         for (int n = 0; n < this.size(); n++)
             temp.add(this.elements[n]);
 
-        // sort of objects.
         Collections.sort(temp, new Comparator<E>() { public int compare(final E a, final E d) {
             return (a.toString().compareTo(d.toString()));
         }
@@ -195,11 +194,9 @@ public class SortedArrayList<E> implements SortedList<E>, Serializable {
             if (this.currentSize == this.elements.length){
                 reAllocate();
             }
-            // move everybody one spot to the back
             for (int i=this.currentSize; i > index; --i){
                 this.elements[i] = this.elements[i-1];
             }
-            // add element at position index
             this.elements[index] = obj;
             this.currentSize++;
         }

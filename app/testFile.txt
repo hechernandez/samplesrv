@@ -1,44 +1,24 @@
-id1
-Hector
-Hernandez
-7876487112
-7876480469
-hector.hernandez19@upr.edu
-addressfields2
-home
-calle azucena
-227
-caguas
-puerto rico
-00682
-home
-Baron Street
-242
-Beaumont
-Texas
-00231
 id2
-Gustavo
-Freeman
-7218379127
-2387123123
-gustavo.freeman@upr.edu
-addressfields2
-home
-street barrio
-2213
-trujillo alto
-puerto rico
-00621
-work
-333 Street
-242
-Mayaguez
-Puerto Rico
-00312
+Margarita
+Baez
+000
+111
+margarita.baez@algo.com
 id3
-Max
-Velazque
-7213312858
-2132132112
-max.velazquez9@upr.edu
+Nicole
+Rodriguez
+7871111111
+7872222222
+nicole.rodriguez@algo.com
+id5
+Sonia
+Rodriguez
+7873333333
+7872444444
+sonia@something.com
+id4
+sjirkf
+jdidkf
+956598
+65898
+jurjrnf
